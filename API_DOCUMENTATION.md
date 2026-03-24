@@ -487,17 +487,12 @@ Configurada em `appsettings.Development.json`:
 
 ```bash
 # Criar migração
-dotnet ef migrations add NomeMigracao
+dotnet ef migrations add initial --project .\src\CatalogoItau.Infrastructure\CatalogoItau.Infrastructure.csproj --startup-project .\src\CatalogoItau.Api\CatalogoItau.Api.csproj
 
 # Aplicar migração
-dotnet ef database update
+dotnet ef database update --project .\src\CatalogoItau.Infrastructure\CatalogoItau.Infrastructure.csproj --startup-project .\src\CatalogoItau.Api\CatalogoItau.Api.csproj
 ```
 
 ## Licença
 
 MIT
-
-## Contato
-
-Equipe de Desenvolvimento
-Email: dev@itau.com
