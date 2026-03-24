@@ -2,24 +2,30 @@
 
 ## Usando cURL
 
+Defina a URL base primeiro (desenvolvimento local):
+
+```bash
+BASE_URL="http://localhost:5112"
+```
+
 ### 1. Listar Produtos
 
 ```bash
-curl -X GET "http://localhost:5000/api/produtos?page=1&pageSize=10" \
+curl -X GET "$BASE_URL/api/produtos?page=1&pageSize=10" \
   -H "accept: application/json"
 ```
 
 ### 2. Obter Produto Específico
 
 ```bash
-curl -X GET "http://localhost:5000/api/produtos/1" \
+curl -X GET "$BASE_URL/api/produtos/1" \
   -H "accept: application/json"
 ```
 
 ### 3. Criar Novo Produto
 
 ```bash
-curl -X POST "http://localhost:5000/api/produtos" \
+curl -X POST "$BASE_URL/api/produtos" \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "Mouse Gamer RGB",
@@ -32,7 +38,7 @@ curl -X POST "http://localhost:5000/api/produtos" \
 ### 4. Atualizar Produto
 
 ```bash
-curl -X PUT "http://localhost:5000/api/produtos/1" \
+curl -X PUT "$BASE_URL/api/produtos/1" \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "Mouse Gamer RGB Pro",
@@ -45,28 +51,28 @@ curl -X PUT "http://localhost:5000/api/produtos/1" \
 ### 5. Deletar Produto
 
 ```bash
-curl -X DELETE "http://localhost:5000/api/produtos/1" \
+curl -X DELETE "$BASE_URL/api/produtos/1" \
   -H "accept: */*"
 ```
 
 ### 6. Listar Pedidos
 
 ```bash
-curl -X GET "http://localhost:5000/api/pedidos?page=1&pageSize=10" \
+curl -X GET "$BASE_URL/api/pedidos?page=1&pageSize=10" \
   -H "accept: application/json"
 ```
 
 ### 7. Obter Pedido Específico
 
 ```bash
-curl -X GET "http://localhost:5000/api/pedidos/1" \
+curl -X GET "$BASE_URL/api/pedidos/1" \
   -H "accept: application/json"
 ```
 
 ### 8. Criar Novo Pedido
 
 ```bash
-curl -X POST "http://localhost:5000/api/pedidos" \
+curl -X POST "$BASE_URL/api/pedidos" \
   -H "Content-Type: application/json" \
   -d '{
     "numeroPedido": "PED-2026-001",
@@ -88,7 +94,7 @@ curl -X POST "http://localhost:5000/api/pedidos" \
 ### 9. Atualizar Status do Pedido
 
 ```bash
-curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
+curl -X PUT "$BASE_URL/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
   -d '{
     "novoStatus": "Enviado"
@@ -98,6 +104,7 @@ curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
 Status válidos:
 
 - `Pendente`
+- `Processando`
 - `Enviado`
 - `Entregue`
 - `Cancelado`
@@ -105,7 +112,7 @@ Status válidos:
 ### 10. Cancelar Pedido
 
 ```bash
-curl -X DELETE "http://localhost:5000/api/pedidos/1" \
+curl -X DELETE "$BASE_URL/api/pedidos/1" \
   -H "accept: */*"
 ```
 
@@ -121,7 +128,7 @@ $body = @{
     estoque = 30
 } | ConvertTo-Json
 
-Invoke-RestMethod -Uri "http://localhost:5000/api/produtos" `
+Invoke-RestMethod -Uri "http://localhost:5112/api/produtos" `
   -Method POST `
   -Headers @{"Content-Type"="application/json"} `
   -Body $body
@@ -146,7 +153,7 @@ $body = @{
     )
 } | ConvertTo-Json -Depth 2
 
-Invoke-RestMethod -Uri "http://localhost:5000/api/pedidos" `
+Invoke-RestMethod -Uri "http://localhost:5112/api/pedidos" `
   -Method POST `
   -Headers @{"Content-Type"="application/json"} `
   -Body $body
@@ -168,7 +175,7 @@ var produto = new
 
 var jsonContent = JsonContent.Create(produto);
 var response = await client.PostAsync(
-    "http://localhost:5000/api/produtos",
+  "http://localhost:5112/api/produtos",
     jsonContent
 );
 
@@ -193,12 +200,12 @@ var pedido = new
 
 var pedidoContent = JsonContent.Create(pedido);
 var pedidoResponse = await client.PostAsync(
-    "http://localhost:5000/api/pedidos",
+  "http://localhost:5112/api/pedidos",
     pedidoContent
 );
 
-var pedidoResult = await pedidoResponse.Content.ReadAsAsync<dynamic>();
-Console.WriteLine($"Pedido criado com ID: {pedidoResult.id}");
+var pedidoResult = await pedidoResponse.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+Console.WriteLine($"Pedido criado com ID: {pedidoResult?["id"]}");
 ```
 
 ## Cenários de Teste
@@ -209,17 +216,17 @@ Console.WriteLine($"Pedido criado com ID: {pedidoResult.id}");
 
 ```bash
 # Produto 1: Notebook
-curl -X POST "http://localhost:5000/api/produtos" \
+curl -X POST "$BASE_URL/api/produtos" \
   -H "Content-Type: application/json" \
   -d '{"nome":"Notebook","descricao":"Notebook 16GB RAM","preco":3499.99,"estoque":5}'
 
 # Produto 2: Mouse
-curl -X POST "http://localhost:5000/api/produtos" \
+curl -X POST "$BASE_URL/api/produtos" \
   -H "Content-Type: application/json" \
   -d '{"nome":"Mouse","descricao":"Mouse Wireless","preco":89.99,"estoque":20}'
 
 # Produto 3: Teclado
-curl -X POST "http://localhost:5000/api/produtos" \
+curl -X POST "$BASE_URL/api/produtos" \
   -H "Content-Type: application/json" \
   -d '{"nome":"Teclado","descricao":"Teclado Mecânico","preco":299.99,"estoque":15}'
 ```
@@ -227,7 +234,7 @@ curl -X POST "http://localhost:5000/api/produtos" \
 2. **Criar Pedido com os 3 Produtos**
 
 ```bash
-curl -X POST "http://localhost:5000/api/pedidos" \
+curl -X POST "$BASE_URL/api/pedidos" \
   -H "Content-Type: application/json" \
   -d '{
     "numeroPedido":"PED-2026-COMPLETO",
@@ -245,12 +252,12 @@ curl -X POST "http://localhost:5000/api/pedidos" \
 
 ```bash
 # Enviado
-curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
+curl -X PUT "$BASE_URL/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
   -d '{"novoStatus":"Enviado"}'
 
 # Entregue
-curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
+curl -X PUT "$BASE_URL/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
   -d '{"novoStatus":"Entregue"}'
 ```
@@ -260,7 +267,7 @@ curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
 **Tentar criar produto sem nome (deve falhar com 400)**
 
 ```bash
-curl -X POST "http://localhost:5000/api/produtos" \
+curl -X POST "$BASE_URL/api/produtos" \
   -H "Content-Type: application/json" \
   -d '{"preco":100,"estoque":10}'
 ```
@@ -269,12 +276,12 @@ curl -X POST "http://localhost:5000/api/produtos" \
 
 ```bash
 # Primeira tentativa (sucesso)
-curl -X POST "http://localhost:5000/api/pedidos" \
+curl -X POST "$BASE_URL/api/pedidos" \
   -H "Content-Type: application/json" \
   -d '{"numeroPedido":"PED-DUP","clienteNome":"Cliente","clienteEmail":"cli@test.com","itens":[{"produtoId":1,"quantidade":1}]}'
 
 # Segunda tentativa com mesmo número (deve falhar)
-curl -X POST "http://localhost:5000/api/pedidos" \
+curl -X POST "$BASE_URL/api/pedidos" \
   -H "Content-Type: application/json" \
   -d '{"numeroPedido":"PED-DUP","clienteNome":"Outro Cliente","clienteEmail":"outro@test.com","itens":[{"produtoId":1,"quantidade":1}]}'
 ```
@@ -283,13 +290,13 @@ curl -X POST "http://localhost:5000/api/pedidos" \
 
 ```bash
 # Página 1, 10 itens por página
-curl "http://localhost:5000/api/produtos?page=1&pageSize=10"
+curl "$BASE_URL/api/produtos?page=1&pageSize=10"
 
 # Página 2, 20 itens por página
-curl "http://localhost:5000/api/produtos?page=2&pageSize=20"
+curl "$BASE_URL/api/produtos?page=2&pageSize=20"
 
-# Página 3, 50 itens por página (máximo)
-curl "http://localhost:5000/api/produtos?page=3&pageSize=50"
+# Página 3, 100 itens por página (máximo)
+curl "$BASE_URL/api/produtos?page=3&pageSize=100"
 ```
 
 ### Cenário 4: Teste de Concorrência
@@ -298,21 +305,21 @@ Simular múltiplas requisições simultâneas tentando atualizar o mesmo pedido:
 
 ```bash
 # Terminal 1
-curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
+curl -X PUT "$BASE_URL/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
-  -d '{"status":"Enviado"}' &
+  -d '{"novoStatus":"Enviado"}' &
 
 # Terminal 2 (simultaneamente)
-curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
+curl -X PUT "$BASE_URL/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
-  -d '{"status":"Entregue"}' &
+  -d '{"novoStatus":"Entregue"}' &
 
 # Uma das requisições deve retornar 409 Conflict
 ```
 
 ## Dicas de Teste
 
-1. **Use o Swagger**: Abra `http://localhost:5000` no navegador para testar interativamente
+1. **Use o Swagger**: Abra `http://localhost:5112/swagger/index.html` no navegador para testar interativamente
 
 2. **Use Postman**: Importe os endpoints no Postman para melhor organização
 

@@ -11,7 +11,8 @@ A **Catálogo Itaú API** é uma API RESTful completa para gerenciamento de cat�
 - ✅ **Validação Fluente**: FluentValidation para regras de validação robustas
 - ✅ **Controle de Concorrência**: Otimista com timestamp de atualização
 - ✅ **Gerenciamento de Transações**: UnitOfWork pattern para operações atômicas
-- ✅ **Documentação OpenAPI**: Swagger/Swashbuckle com comentários XML-Doc completos
+- ✅ **Documentação OpenAPI**: Swagger/Swashbuckle
+- ✅ **Logging Estruturado**: Serilog com saída JSON no console
 - ✅ **Tratamento de Exceções**: Middleware centralizado com mapeamento para HTTP status codes
 - ✅ **Soft Delete**: Produtos podem ser inativados mantendo histórico
 - ✅ **Paginação**: Suporte para paginação em GET endpoints
@@ -26,6 +27,7 @@ A **Catálogo Itaú API** é uma API RESTful completa para gerenciamento de cat�
 - **CQRS**: MediatR 14.1.0
 - **Validação**: FluentValidation 11.11.0
 - **Documentação**: Swashbuckle.AspNetCore 10.1.5
+- **Logging**: Serilog.AspNetCore 9.0.0 + Serilog.Sinks.Console 6.0.0
 - **Serialização**: System.Text.Json
 
 ## Acesso à Documentação Interativa
@@ -33,14 +35,16 @@ A **Catálogo Itaú API** é uma API RESTful completa para gerenciamento de cat�
 A documentação OpenAPI (Swagger) está disponível em **desenvolvimento**:
 
 ```
-http://localhost:5000
+http://localhost:5112/swagger/index.html
 ```
 
 ou diretamente no endpoint:
 
 ```
-http://localhost:5000/swagger/index.html
+https://localhost:7133/swagger/index.html
 ```
+
+Observação: dependendo da forma de execução, a porta pode variar conforme `launchSettings.json` ou configuração de ambiente.
 
 ## Endpoints da API
 
@@ -128,12 +132,16 @@ Body: (vazio)
 
 ```json
 {
-  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-  "title": "One or more validation errors occurred.",
+  "type": "ValidationFailure",
+  "title": "Validation error",
   "status": 400,
-  "errors": {
-    "Nome": ["'Nome' não deve estar vazio."]
-  }
+  "detail": "One or more validation errors has occurred",
+  "errors": [
+    {
+      "propertyName": "Nome",
+      "errorMessage": "'Nome' não deve estar vazio."
+    }
+  ]
 }
 ```
 
@@ -200,7 +208,9 @@ GET /api/pedidos?page=1&pageSize=10
   "page": 1,
   "pageSize": 10,
   "totalItems": 50,
-  "totalPages": 5
+  "totalPages": 5,
+  "hasNextPage": true,
+  "hasPreviousPage": false
 }
 ```
 
@@ -274,6 +284,7 @@ Content-Type: application/json
 **Valores de Status:**
 
 - `Pendente`: Pedido recém-criado
+- `Processando`: Pedido em preparação
 - `Enviado`: Pedido foi despachado
 - `Entregue`: Pedido chegou ao destino
 - `Cancelado`: Pedido foi cancelado
@@ -365,13 +376,20 @@ DELETE /api/pedidos/{id}
 
 ```json
 {
-  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-  "title": "One or more validation errors occurred.",
+  "type": "ValidationFailure",
+  "title": "Validation error",
   "status": 400,
-  "errors": {
-    "Nome": ["'Nome' deve ter comprimento máximo de 100 caracteres."],
-    "Preco": ["'Preco' deve ser maior que 0."]
-  }
+  "detail": "One or more validation errors has occurred",
+  "errors": [
+    {
+      "propertyName": "Nome",
+      "errorMessage": "'Nome' deve ter comprimento máximo de 100 caracteres."
+    },
+    {
+      "propertyName": "Preco",
+      "errorMessage": "'Preco' deve ser maior que 0."
+    }
+  ]
 }
 ```
 
@@ -381,9 +399,10 @@ Pode ocorrer quando múltiplas requisições tentam atualizar o mesmo pedido sim
 
 ```json
 {
-  "message": "Conflito ao atualizar o pedido. Tente novamente.",
+  "type": "ConcurrencyConflict",
+  "title": "Resource conflict",
   "status": 409,
-  "timestamp": "2026-03-23T11:00:00Z"
+  "detail": "The resource was modified by another process. Please refresh and try again."
 }
 ```
 
@@ -400,12 +419,12 @@ Pode ocorrer quando múltiplas requisições tentam atualizar o mesmo pedido sim
 
 ### Pedidos
 
-| Campo        | Regra                                    |
-| ------------ | ---------------------------------------- |
-| NumeroPedido | Obrigatório, único, máximo 50 caracteres |
-| ClienteNome  | Obrigatório, máximo 150 caracteres       |
-| ClienteEmail | Obrigatório, formato de email válido     |
-| Itens        | Obrigatório, mínimo 1 item               |
+| Campo        | Regra                                |
+| ------------ | ------------------------------------ |
+| NumeroPedido | Obrigatório, único                   |
+| ClienteNome  | Obrigatório, máximo 150 caracteres   |
+| ClienteEmail | Obrigatório, formato de email válido |
+| Itens        | Obrigatório, mínimo 1 item           |
 
 ### Itens do Pedido
 
@@ -419,7 +438,7 @@ Pode ocorrer quando múltiplas requisições tentam atualizar o mesmo pedido sim
 ### 1. Criar um produto
 
 ```bash
-curl -X POST http://localhost:5000/api/produtos \
+curl -X POST http://localhost:5112/api/produtos \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "Notebook Dell",
@@ -433,13 +452,13 @@ curl -X POST http://localhost:5000/api/produtos \
 ### 2. Listar produtos
 
 ```bash
-curl http://localhost:5000/api/produtos?page=1&pageSize=10
+curl http://localhost:5112/api/produtos?page=1&pageSize=10
 ```
 
 ### 3. Criar um pedido
 
 ```bash
-curl -X POST http://localhost:5000/api/pedidos \
+curl -X POST http://localhost:5112/api/pedidos \
   -H "Content-Type: application/json" \
   -d '{
     "numeroPedido": "PED-2026-001",
@@ -458,10 +477,10 @@ curl -X POST http://localhost:5000/api/pedidos \
 ### 4. Atualizar status do pedido
 
 ```bash
-curl -X PUT http://localhost:5000/api/pedidos/1/status \
+curl -X PUT http://localhost:5112/api/pedidos/1/status \
   -H "Content-Type: application/json" \
   -d '{
-    "status": "Enviado"
+    "novoStatus": "Enviado"
   }'
 # Resposta: 204 No Content
 ```
@@ -511,8 +530,8 @@ cd src/CatalogoItau.Api
 dotnet run
 ```
 
-API disponível em: `http://localhost:5000`
-Swagger disponível em: `http://localhost:5000`
+API disponível em: `http://localhost:5112`
+Swagger disponível em: `http://localhost:5112/swagger/index.html`
 
 ### Build
 
