@@ -91,7 +91,7 @@ curl -X POST "http://localhost:5000/api/pedidos" \
 curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
   -d '{
-    "status": "Enviado"
+    "novoStatus": "Enviado"
   }'
 ```
 
@@ -247,12 +247,12 @@ curl -X POST "http://localhost:5000/api/pedidos" \
 # Enviado
 curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
-  -d '{"status":"Enviado"}'
+  -d '{"novoStatus":"Enviado"}'
 
 # Entregue
 curl -X PUT "http://localhost:5000/api/pedidos/1/status" \
   -H "Content-Type: application/json" \
-  -d '{"status":"Entregue"}'
+  -d '{"novoStatus":"Entregue"}'
 ```
 
 ### Cenário 2: Teste de Validações
