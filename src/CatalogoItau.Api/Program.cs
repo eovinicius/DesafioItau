@@ -21,7 +21,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // builder.WebHost.UseUrls("http://*:5000");
+    builder.WebHost.UseUrls("http://*:5000");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
