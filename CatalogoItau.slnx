@@ -6,6 +6,7 @@
     <Project Path="src/CatalogoItau.Infrastructure/CatalogoItau.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Catalogo.IntegrationTest/Catalogo.IntegrationTest.csproj" />
     <Project Path="tests/Catalogo.UnitTest/Catalogo.UnitTest.csproj" />
   </Folder>
 </Solution>
