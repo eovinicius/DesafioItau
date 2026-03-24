@@ -32,6 +32,7 @@ public sealed class ProdutoValidatorsTests
         {
             Id = 0,
             Nome = string.Empty,
+            Descricao = new string('x', 501),
             Preco = 0m,
             Estoque = -1
         };
@@ -42,6 +43,7 @@ public sealed class ProdutoValidatorsTests
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.Id);
         result.ShouldHaveValidationErrorFor(x => x.Nome);
+        result.ShouldHaveValidationErrorFor(x => x.Descricao);
         result.ShouldHaveValidationErrorFor(x => x.Preco);
         result.ShouldHaveValidationErrorFor(x => x.Estoque);
     }
