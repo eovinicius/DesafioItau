@@ -267,7 +267,7 @@ PUT /api/pedidos/{id}/status
 Content-Type: application/json
 
 {
-  "status": "Enviado"
+  "novoStatus": "Enviado"
 }
 ```
 
@@ -279,6 +279,63 @@ Content-Type: application/json
 - `Cancelado`: Pedido foi cancelado
 
 **Response (204 No Content):** Status atualizado
+
+## Testes Automatizados
+
+### Estratégia
+
+- **Testes unitários**: foco em regras de domínio, handlers, validadores e behaviors.
+- **Testes de integração**: foco em commands de `Pedido` e `Produto` usando infraestrutura real (EF Core + PostgreSQL).
+- **Padrão de escrita**: AAA (Arrange, Act, Assert).
+
+### Projetos de Teste
+
+- `tests/Catalogo.UnitTest`
+- `tests/Catalogo.IntegrationTest`
+
+### Executar Testes
+
+Executar todos os testes:
+
+```bash
+dotnet test
+```
+
+Executar apenas unitários:
+
+```bash
+dotnet test tests/Catalogo.UnitTest/Catalogo.UnitTest.csproj
+```
+
+Executar apenas integração:
+
+```bash
+dotnet test tests/Catalogo.IntegrationTest/Catalogo.IntegrationTest.csproj
+```
+
+Executar com cobertura:
+
+```bash
+dotnet test tests/Catalogo.UnitTest/Catalogo.UnitTest.csproj --collect:"XPlat Code Coverage"
+dotnet test tests/Catalogo.IntegrationTest/Catalogo.IntegrationTest.csproj --collect:"XPlat Code Coverage"
+```
+
+### Pré-requisitos para Integração
+
+- PostgreSQL disponível em `localhost:5432`.
+- String de conexão padrão usada pelos testes:
+
+```text
+Host=localhost;Port=5432;Database=CatalogoItau;Username=admin;Password=postgres@Itau123
+```
+
+- Opcionalmente, definir variável de ambiente para testes:
+
+```powershell
+$env:TEST_DB_CONNECTION="Host=localhost;Port=5432;Database=CatalogoItau;Username=admin;Password=postgres@Itau123"
+```
+
+Observação: os testes de integração fazem reset do banco (`EnsureDeleted` + `EnsureCreated`) para garantir isolamento entre cenários.
 
 #### Cancelar Pedido
 
