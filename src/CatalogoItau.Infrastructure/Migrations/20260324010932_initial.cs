@@ -40,6 +40,7 @@ namespace CatalogoItau.Infrastructure.Migrations
                     Preco = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Estoque = table.Column<int>(type: "integer", nullable: false),
                     DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
                 constraints: table =>

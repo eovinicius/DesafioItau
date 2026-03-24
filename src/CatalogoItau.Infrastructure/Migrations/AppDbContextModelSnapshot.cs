@@ -103,6 +103,10 @@ namespace CatalogoItau.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<DateTime>("AtualizadoEm")
+                        .IsConcurrencyToken()
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
 

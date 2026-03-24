@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CatalogoItau.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260323222013_initial")]
+    [Migration("20260324010932_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -105,6 +105,10 @@ namespace CatalogoItau.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
+
+                    b.Property<DateTime>("AtualizadoEm")
+                        .IsConcurrencyToken()
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
