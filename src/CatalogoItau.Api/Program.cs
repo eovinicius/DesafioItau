@@ -4,6 +4,8 @@ using CatalogoItau.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddStructuredLogging();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
@@ -21,10 +23,11 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    builder.WebHost.UseUrls("http://*:5000");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStructuredRequestLogging();
 
 app.UseHttpsRedirection();
 
