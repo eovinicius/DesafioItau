@@ -55,6 +55,9 @@ public sealed class AtualizarProdutoValidator : AbstractValidator<AtualizarProdu
             .NotEmpty()
             .MaximumLength(100);
 
+        RuleFor(x => x.Descricao)
+            .MaximumLength(500);
+
         RuleFor(x => x.Preco)
             .GreaterThan(0);
 
