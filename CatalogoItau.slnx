@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CatalogoItau.Api/CatalogoItau.Api.csproj" />
+    <Project Path="src/CatalogoItau.Application/CatalogoItau.Application.csproj" />
+    <Project Path="src/CatalogoItau.Domain/CatalogoItau.Domain.csproj" />
+    <Project Path="src/CatalogoItau.Infrastructure/CatalogoItau.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>

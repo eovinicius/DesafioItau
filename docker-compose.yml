@@ -1,0 +1,10 @@
+services:
+  catalogoitau-db:
+    image: postgres:latest
+    container_name: catalogoitau-db
+    environment:
+      - POSTGRES_DB=CatalogoItau
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=postgres@Itau123
+    ports:
+      - 5432:5432
