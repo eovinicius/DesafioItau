@@ -1,7 +1,9 @@
 using CatalogoItau.Application.Behaviors;
+
 using ApplicationValidationException = CatalogoItau.Application.Exceptions.ValidationException;
 
 using FluentAssertions;
+
 using FluentValidation;
 
 using MediatR;
